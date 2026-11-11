@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<title>Growth Audit — Invoice Maker</title>
+<link rel="icon" href="img/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  color-scheme: only light;
+  /* ---- ArtEasy, extracted from their live iOS screens ---- */
+  --ae-bg:#FEFAFE; --ae-card:#FFFFFF; --ae-navy:#110924;
+  --ae-ink:#0F0922; --ae-txt:#6F6979; --ae-muted:#A29DAB; --ae-line:#BBBBBB;
+  --ae-pink:#FF4E6E; --ae-pink2:#FF2D53; --ae-pinkgrad:linear-gradient(180deg,#FF5A7A,#FF3A63);
+  --ae-maroon:#39142B; --ae-wash:#FAEBF9; --ae-violet:#7447EC;
+  --ae-offer:#2B1F23; --ae-badge:#D64361;
+  --r-ctl:30px; --r-media:28px;
+  /* ---- the report shell, in ArtEasy's own palette ---- */
+  --bg:#FEFAFE; --bg2:#FFFFFF; --surf:#FFFFFF;
+  --hair:rgba(15,9,34,.09); --hair2:rgba(15,9,34,.16);
+  --ink:#0F0922; --ink2:#4F4A5A; --ink3:#8D879A;
+  --accent:#FF4E6E; --accent-lift:#D6234A;
+  --panel:#FFFFFF; --panel-ink:#140E24; --panel-muted:#625D6E; --panel-line:#EDE8EF;
+  --accent-ink:#C01D41;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);
+  font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px}
+@media(max-width:700px){.wrap{padding:0 20px}}
+
+/* ============ top bar ============ */
+.nav{position:sticky;top:0;z-index:70;background:rgba(254,250,254,.86);backdrop-filter:blur(18px) saturate(160%);
+  border-bottom:1px solid var(--hair)}
+.nav-in{max-width:1080px;margin:0 auto;padding:0 32px;height:58px;display:flex;align-items:center;gap:18px}
+@media(max-width:700px){.nav-in{padding:0 20px;gap:12px}}
+.nav-brand{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;letter-spacing:-.01em}
+.nav-brand img{width:26px;height:26px;border-radius:7px;display:block;flex:none}
+.nav-brand span{color:var(--ink2);font-weight:500}
+.nav-brand b{color:var(--ink);font-weight:600}
+.nav-links{margin-left:auto;display:flex;gap:2px;align-items:center}
+.nav-links button{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;color:var(--ink3);transition:.16s}
+.nav-links button:hover{color:var(--ink)}
+.nav-links button.on{color:var(--ink);background:#fff;box-shadow:0 1px 4px rgba(15,9,34,.08)}
+@media(max-width:640px){.nav-brand span{display:none}}
+.view{display:none}
+.view.on{display:block}
+
+/* ============ hero ============ */
+.hero{padding:104px 0 0;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-340px;left:50%;transform:translateX(-50%);
+  width:1100px;height:640px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(255,78,110,.16),transparent 72%)}
+.hero::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(40% 50% at 8% 20%,rgba(116,71,236,.12),transparent 70%),
+   radial-gradient(38% 45% at 92% 18%,rgba(250,200,230,.45),transparent 70%)}
+.hero>*{position:relative;z-index:1}
+.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-lift);margin-bottom:26px}
+.hero h1{font-size:76px;line-height:.98;font-weight:700;letter-spacing:-.045em;margin:0 0 24px}
+@media(max-width:820px){.hero h1{font-size:50px}.hero{padding-top:70px}}
+.hero .lede{font-size:20px;line-height:1.5;font-weight:400;color:var(--ink2);max-width:600px;margin:0 auto;letter-spacing:-.012em}
+@media(max-width:820px){.hero .lede{font-size:17px}}
+.hero .meta{margin-top:30px;font-size:12.5px;color:var(--ink3);letter-spacing:.02em}
+.hero .meta b{color:var(--ink2);font-weight:600}
+.stats{display:flex;justify-content:center;gap:0;margin:70px auto 0;max-width:760px;
+  border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.stat{flex:1;padding:26px 14px;text-align:center;border-left:1px solid var(--hair)}
+.stat:first-child{border-left:none}
+.stat b{display:block;font-size:26px;font-weight:700;letter-spacing:-.03em;color:var(--ink)}
+.stat span{display:block;font-size:11.5px;color:var(--ink3);margin-top:5px;line-height:1.35}
+@media(max-width:700px){.stat b{font-size:19px}.stat{padding:18px 8px}}
+.fb{max-width:760px;margin:0 auto;padding:30px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:26px;text-align:left}
+@media(max-width:700px){.fb{grid-template-columns:1fr;gap:20px;padding-top:24px}}
+.fb-k{grid-column:1/-1;font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink3);text-align:center;margin-bottom:-6px}
+.fb-i{display:flex;gap:12px;align-items:flex-start}
+.fb-i .tick{width:18px;height:18px;flex:none;margin-top:3px;border-radius:50%;background:rgba(255,78,110,.14);display:grid;place-items:center}
+.fb-i .tick svg{width:10px;height:10px;stroke:var(--accent-lift);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.fb-i p{font-size:14px;line-height:1.55;color:var(--ink2);margin:0}
+.fb-i p b{color:var(--ink);font-weight:700}
+.sec{padding:96px 0}
+.sec-k{font-size:11.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin-bottom:18px}
+.sec h2{font-size:38px;line-height:1.14;font-weight:700;letter-spacing:-.035em;margin:0 0 20px;max-width:680px}
+@media(max-width:820px){.sec h2{font-size:29px}.sec{padding:64px 0}}
+.sec p.body{font-size:17px;line-height:1.66;color:var(--ink2);max-width:640px;margin:0 0 18px;letter-spacing:-.008em}
+.sec p.body b{color:var(--ink);font-weight:600}
+.rule{height:1px;background:var(--hair);margin:0}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;max-width:820px}
+@media(max-width:760px){.notes{grid-template-columns:1fr}}
+.note{background:var(--surf);border:1px solid var(--hair);box-shadow:0 2px 10px rgba(15,9,34,.04);border-radius:16px;padding:24px 26px}
+.note h4{font-size:15px;font-weight:700;letter-spacing:-.015em;margin:0 0 8px}
+.note p{font-size:14px;line-height:1.6;color:var(--ink2);margin:0}
+.ideas{display:flex;flex-direction:column;gap:0;margin-top:14px;border-top:1px solid var(--hair)}
+.idea{display:grid;grid-template-columns:52px 1fr 180px;gap:26px;align-items:start;
+  padding:30px 4px;border-bottom:1px solid var(--hair);text-align:left;width:100%;transition:.18s}
+.idea:hover{background:rgba(255,255,255,.8)}
+@media(max-width:780px){.idea{grid-template-columns:38px 1fr;gap:16px}}
+.idea .no{font-size:13px;font-weight:700;color:var(--ink3);padding-top:4px;letter-spacing:.02em}
+.idea h3{font-size:21px;line-height:1.25;font-weight:700;letter-spacing:-.024em;margin:0 0 7px}
+@media(max-width:820px){.idea h3{font-size:18px}}
+.idea p{font-size:14.5px;line-height:1.6;color:var(--ink2);margin:0;max-width:540px}
+.idea .out{text-align:right;padding-top:3px}
+@media(max-width:780px){.idea .out{grid-column:2;text-align:left;padding-top:12px}}
+.idea .out b{display:block;font-size:19px;font-weight:700;letter-spacing:-.025em;color:var(--accent-lift);white-space:nowrap}
+.idea .out span{display:block;font-size:10.5px;color:var(--ink3);margin-top:3px;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.idea .seeit{display:inline-flex;align-items:center;gap:5px;margin-top:11px;font-size:12.5px;font-weight:600;color:var(--accent-lift)}
+.idea .seeit svg{width:12px;height:12px}
+.band{background:var(--surf);border:1px solid var(--hair);border-radius:28px;box-shadow:0 2px 10px rgba(15,9,34,.04);padding:40px 44px;margin-top:44px;
+  display:flex;align-items:center;gap:36px;flex-wrap:wrap}
+@media(max-width:700px){.band{padding:28px 24px;gap:22px}}
+.band .lab{font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+.band .txt{flex:1;min-width:240px}
+.band .txt p{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0}
+.band .nums{display:flex;gap:34px}
+.band .nums div b{display:block;font-size:30px;font-weight:700;letter-spacing:-.035em;color:var(--accent-lift)}
+.band .nums div span{display:block;font-size:11px;color:var(--ink3);margin-top:2px;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.cta-row{display:flex;justify-content:center;margin-top:52px;align-items:center;gap:22px;flex-wrap:wrap}
+.bigbtn{display:inline-flex;align-items:center;gap:9px;background:var(--accent);color:#fff;
+  font-size:15px;font-weight:700;letter-spacing:-.01em;padding:15px 26px;border-radius:30px;transition:.16s}
+.bigbtn:hover{filter:brightness(1.06)}
+.bigbtn svg{width:15px;height:15px}
+.foot{border-top:1px solid var(--hair);padding:36px 0 70px;font-size:12.5px;line-height:1.6;color:var(--ink3)}
+.herobtns{display:flex;justify-content:center;margin-top:30px}
+.ghostbtn{display:inline-flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--hair2);color:var(--ink);font-size:14px;
+  font-weight:700;padding:9px 20px 9px 9px;border-radius:30px;box-shadow:0 2px 12px rgba(15,9,34,.06);transition:.16s}
+.ghostbtn:hover{box-shadow:0 4px 18px rgba(15,9,34,.1)}
+.ghostbtn .pl{width:30px;height:30px;border-radius:50%;background:var(--accent);display:grid;place-items:center}
+.ghostbtn .pl svg{width:12px;height:12px;fill:#fff;margin-left:2px}
+
+/* ============ prototype stage ============ */
+.stage{display:grid;grid-template-columns:minmax(440px,1fr) minmax(400px,470px);gap:0;align-items:start;min-height:calc(100vh - 58px)}
+@media(max-width:1080px){.stage{grid-template-columns:1fr}}
+.phonecol{padding:34px 24px 46px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.panelcol{border-left:1px solid var(--hair);background:var(--panel);color:var(--panel-ink);
+  min-height:calc(100vh - 58px);position:sticky;top:58px;max-height:calc(100vh - 58px);overflow-y:auto}
+@media(max-width:1080px){.panelcol{position:static;max-height:none;border-left:none;border-top:1px solid var(--hair)}}
+.phone{position:relative;width:390px;height:844px;flex:none;background:#000;border:11px solid #000;
+  border-radius:46px;box-shadow:0 0 0 1.5px #E2D9E2,0 34px 70px -22px rgba(15,9,34,.35)}
+.phone-in{position:absolute;inset:0;border-radius:36px;overflow:hidden;background:var(--ae-bg);color-scheme:only light}
+.island{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:104px;height:30px;background:#000;border-radius:16px;z-index:60;pointer-events:none}
+.sbar{position:absolute;top:0;left:0;right:0;height:50px;z-index:55;pointer-events:none;display:flex;
+  align-items:center;justify-content:space-between;padding:14px 28px 0 34px;font:600 15px/1 -apple-system,'Inter',sans-serif;color:#111;transition:color .3s}
+.sbar.light{color:#fff}
+.sbar .glyphs{display:flex;gap:5px;align-items:center}
+.homebar{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#111;z-index:56;pointer-events:none;transition:background .3s}
+.homebar.light{background:rgba(255,255,255,.9)}
+.screenwrap{position:absolute;inset:0;overflow:hidden;background:var(--ae-bg)}
+
+/* prototype toolbar, walkthrough, QR */
+.tools{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:520px}
+.seg{display:inline-flex;align-items:center;background:#fff;border:1px solid #EAE2EA;border-radius:20px;padding:3px;gap:2px}
+.seg button{padding:6px 11px;border-radius:16px;font:600 12px/1 'Plus Jakarta Sans',sans-serif;color:var(--ink2);transition:.14s}
+.seg button.on{background:var(--ink);color:#fff}
+.demo-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:20px;background:var(--accent);color:#fff;font:700 12px/1 'Plus Jakarta Sans',sans-serif}
+.demo-cap{width:390px;max-width:calc(100vw - 24px);background:#fff;border:1px solid var(--hair);border-radius:16px;padding:14px 14px 12px;
+  display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;box-shadow:0 4px 18px rgba(15,9,34,.07)}
+.demo-cap .bar{position:absolute;left:0;top:0;right:0;height:3px;background:#F3EEF3}
+.demo-cap .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s linear}
+.demo-cap p{flex:1;font-size:13.5px;line-height:1.45;color:var(--ink);margin:0;font-weight:500}
+.demo-cap button{font:700 12px/1 'Plus Jakarta Sans',sans-serif;color:var(--ink2);padding:7px 10px;border-radius:12px;border:1px solid #EAE2EA;flex:none}
+.finger{position:absolute;z-index:90;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(15,9,34,.26);
+  border:2px solid rgba(255,255,255,.95);box-shadow:0 4px 14px rgba(0,0,0,.25);pointer-events:none;opacity:0;left:50%;top:60%;
+  transition:left .32s cubic-bezier(.4,0,.2,1),top .32s cubic-bezier(.4,0,.2,1),opacity .2s,transform .15s}
+.finger.show{opacity:1}
+.finger.press{transform:scale(.78);background:rgba(15,9,34,.4)}
+.qr{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--hair);border-radius:16px;padding:10px 16px 10px 10px;text-align:left}
+.qr img{width:135px;height:135px;display:block;image-rendering:pixelated;border-radius:6px}
+.qr span{font-size:12.5px;line-height:1.45;color:var(--ink2)}
+.qr b{display:block;color:var(--ink);font-size:13.5px}
+@media(max-width:1080px){.qr{display:none}}
+#view-proto .tools{order:0} #view-proto .demo-cap{order:1} #view-proto .phone{order:2} #view-proto .chips{order:3}
+#view-proto .chiphint{order:4} #view-proto .qr{order:5}
+.cta-row .qr{order:2}
+/* on a phone: the prototype is the screen */
+@media(max-width:500px){
+  #view-proto .phonecol{padding:0 0 28px;gap:14px}
+  #view-proto .phone{width:100vw;height:calc(100svh - 58px);min-height:640px;border:0;border-radius:0;box-shadow:none;order:1}
+  #view-proto .phone-in{border-radius:0}
+  #view-proto .island,#view-proto .sbar,#view-proto .homebar{display:none}
+  #view-proto .scr-foot{padding-bottom:18px}
+  #view-proto .tools{order:3;padding:0 12px}
+  #view-proto .demo-cap{position:fixed;left:12px;right:12px;bottom:12px;width:auto;max-width:none;z-index:95}
+  #view-proto .chips{order:4;padding:0 12px}
+  #view-proto .chiphint{order:5}
+}
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:470px;margin:0 auto}
+.chip{padding:7px 13px;border-radius:20px;border:1px solid #EAE2EA;background:#fff;font:600 12px/1 'Plus Jakarta Sans',sans-serif;color:var(--ink2);transition:.14s}
+.chip:hover{color:var(--ink);border-color:#D6CCD6}
+.chip.offer{border-style:dashed;border-color:var(--accent);color:var(--accent-lift)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff;border-style:solid}
+.chiphint{text-align:center;font-size:11px;color:var(--ink3);margin:0;max-width:430px}
+
+/* ============ the short panel ============ */
+.pn{padding:30px 30px 60px}
+.pn-n{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink)}
+.pn-n.ctx{color:var(--panel-muted)}
+.pn-t{font-size:23px;line-height:1.18;font-weight:700;letter-spacing:-.028em;margin:8px 0 0;color:var(--panel-ink)}
+.pn-hyp{font-size:15px;line-height:1.62;color:#2F2938;margin:16px 0 0}
+.pn-hyp b{font-weight:700;color:var(--panel-ink)}
+.pn-out{margin-top:22px;border-top:1px solid var(--panel-line);padding-top:18px}
+.pn-out .lab{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--panel-muted)}
+.pn-out .v{font-size:31px;font-weight:700;letter-spacing:-.035em;color:var(--accent-ink);margin-top:7px;line-height:1}
+.pn-kept{margin-top:22px;font-size:12.5px;line-height:1.55;color:var(--panel-muted)}
+.pn-kept b{color:#2F2938;font-weight:700}
+.pn-foot{font-size:11.5px;line-height:1.55;color:var(--panel-muted);border-top:1px solid var(--panel-line);padding-top:14px;margin-top:26px}
+.pn-sep{height:1px;background:var(--panel-line);margin:26px 0}
+.hidden{display:none !important}
+
+/* ---- shell in Invoice Maker's palette ---- */
+:root{
+  --bg:#F7F8FB; --bg2:#FFFFFF; --surf:#FFFFFF;
+  --hair:rgba(8,18,17,.09); --hair2:rgba(8,18,17,.16);
+  --ink:#081211; --ink2:#454A55; --ink3:#868B96;
+  --accent:#1326DE; --accent-lift:#1326DE; --accent-ink:#0F1FB8;
+  --panel:#FFFFFF; --panel-ink:#0B1220; --panel-muted:#5E6470; --panel-line:#E8EAF0;
+  /* ---- Invoice Maker, extracted from their live iOS screens ---- */
+  --im-bg:#FFFFFF; --im-bg2:#F4F6F8; --im-card:#FFFFFF; --im-ink:#081211; --im-txt:#3B3A3B; --im-muted:#9A9AA2;
+  --im-blue:#1326DE; --im-line:#C9CBD1; --im-badge:linear-gradient(90deg,#E0782E,#DC3A28); --im-green:#1E5B3A;
+}
+.nav{background:rgba(247,248,251,.86)}
+.nav-brand img{border-radius:7px}
+.hero::before{background:radial-gradient(closest-side,rgba(19,38,222,.12),transparent 72%)}
+.hero::after{background:radial-gradient(40% 50% at 8% 20%,rgba(30,91,58,.08),transparent 70%),radial-gradient(38% 45% at 92% 18%,rgba(224,120,46,.10),transparent 70%)}
+.fb-i .tick{background:rgba(19,38,222,.1)}
+.phone{box-shadow:0 0 0 1.5px #DDE0E7,0 34px 70px -22px rgba(8,18,17,.35)}
+.phone-in,.screenwrap{background:var(--im-bg)}
+
+/* ============ phone screens — Invoice Maker's system, prefixed scr-/im- ============ */
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--im-bg);color:var(--im-ink);
+  font-family:'Poppins',-apple-system,sans-serif;transform:translateX(100%);transition:transform .36s cubic-bezier(.32,.72,0,1);z-index:10;will-change:transform}
+.scr.is-active{transform:translateX(0);z-index:20}
+.scr.is-past{transform:translateX(-24%)}
+.scr.sheet{transform:translateY(100%)}
+.scr.sheet.is-active{transform:translateY(0);z-index:30}
+.scr.nofx{transition:none}
+.scr-top{flex:none;position:relative;z-index:2}
+.scr-body{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;position:relative;z-index:2}
+.scr-body::-webkit-scrollbar{display:none}
+.scr-foot{flex:none;padding:12px 22px 30px;position:relative;z-index:2}
+.im-h{font-family:'Playfair Display',Georgia,serif;font-size:31px;line-height:1.12;font-weight:600;text-align:center;margin:86px 22px 0;color:var(--im-ink);letter-spacing:-.01em}
+.im-sub{font-size:14.5px;line-height:1.45;color:var(--im-txt);margin:10px 24px 0;text-align:center}
+.im-media{display:block;width:100%;height:auto;margin-top:14px}
+.im-btn{display:block;width:100%;height:56px;border-radius:16px;background:var(--im-blue);color:#fff;font:500 19px/1 'Poppins',sans-serif}
+
+/* need — question in their onboarding style */
+.im-needs{display:flex;flex-direction:column;gap:12px;margin:28px 22px 0}
+.im-need{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:#fff;border:2px solid #E6E8EE;border-radius:18px;padding:13px 14px;box-shadow:0 4px 14px rgba(8,18,17,.05);transition:.16s}
+.im-need .ic{width:42px;height:42px;border-radius:50%;background:#E8F1EC;display:grid;place-items:center;flex:none;color:var(--im-green)}
+.im-need .ic svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.im-need b{display:block;font-family:'Playfair Display',Georgia,serif;font-size:18px;font-weight:600;color:var(--im-ink)}
+.im-need span{font-size:13px;color:var(--im-txt)}
+.im-need.on{border-color:var(--im-blue)}
+.im-need.on .ic{background:var(--im-blue);color:#fff}
+
+/* paywall — their wood-desk hero, plan rows, BEST OFFER pill, blue CTA */
+.scr--pay{background:var(--im-bg2)}
+.im-paybg{position:absolute;left:0;right:0;top:0;height:250px;z-index:0;
+  -webkit-mask-image:linear-gradient(180deg,#000 55%,transparent);mask-image:linear-gradient(180deg,#000 55%,transparent)}
+.im-paybg img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block}
+.im-x{position:absolute;left:18px;top:52px;z-index:6;width:40px;height:40px;display:grid;place-items:center;color:#6B6E75}
+.im-x svg{width:26px;height:26px}
+.im-tabs{position:relative;z-index:3;display:flex;width:244px;margin:120px auto 0;background:rgba(228,229,233,.92);border-radius:24px;padding:4px}
+.im-tabs button{flex:1;height:38px;border-radius:20px;font:500 16.5px/1 'Poppins',sans-serif;color:#1B1B1B}
+.im-tabs button.on{background:#fff;color:var(--im-blue);font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.im-payh{font-size:24px;line-height:1.18;font-weight:700;text-align:center;color:#000;margin:14px 16px 0}
+.im-bul{text-align:center;font-size:14px;line-height:1.5;color:#111;margin:8px 10px 0}
+.im-bul i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--im-blue);margin:0 6px 1px 10px}
+.scr--pay .scr-body{padding:0 20px}
+.im-rate{display:flex;justify-content:center;align-items:center;gap:7px;font-size:13px;color:#3B3A3B;margin-top:8px}
+.im-rate .st{color:#F6B431;letter-spacing:1px;font-size:14px}
+.im-rate b{color:#000}
+.im-plans{display:flex;flex-direction:column;gap:14px;margin-top:16px}
+.im-plan{position:relative;display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;background:transparent;border:2px solid var(--im-line);border-radius:18px;padding:12px 18px;min-height:70px}
+.im-plan.on{border-color:var(--im-blue)}
+.im-plan .t{display:block;font-size:19px;font-weight:500;color:#9A9AA2;line-height:1.2}
+.im-plan .s{display:block;font-size:15.5px;color:#9A9AA2;margin-top:2px}
+.im-plan .r{text-align:right;font-size:15px;color:#9A9AA2;line-height:1.25}
+.im-plan .r b{display:block;font-size:17px;font-weight:500}
+.im-plan.on .t{color:var(--im-blue)}
+.im-plan.on .s{color:#5B5D63}
+.im-plan.on .r{color:#000}
+.im-badge{position:absolute;right:30px;top:-14px;background:var(--im-badge);color:#fff;font-size:13px;font-weight:700;letter-spacing:.02em;border-radius:12px;padding:3px 12px}
+.im-biz{display:none}
+.scr--pay.biz .im-prem{display:none}
+.scr--pay.biz .im-biz{display:flex}
+.scr--pay .scr-foot{padding:6px 20px 22px;background:var(--im-bg2)}
+.im-note{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15.5px;color:#111;margin:0 0 10px;text-transform:uppercase;letter-spacing:.01em}
+.im-note svg{width:22px;height:22px}
+.im-pbtn{display:block;width:100%;height:56px;border-radius:16px;background:var(--im-blue);color:#fff;font:700 21px/1 'Poppins',sans-serif}
+.im-fine{font-size:14px;color:#111;text-align:center;margin-top:8px}
+.im-legal{display:flex;justify-content:space-between;margin-top:6px}
+.im-legal a{font-size:12.5px;color:#A3A6AD}
+
+/* offer — their in-app Premium tab */
+.scr--offer{background:linear-gradient(180deg,#E9ECFA,#F4F6F8 45%)}
+.scr--offer .im-x{color:#4A4D55}
+.im-doc{display:block;width:72%;margin:58px auto 0;border-radius:22px 22px 0 0;
+  -webkit-mask-image:linear-gradient(180deg,#000 70%,transparent);mask-image:linear-gradient(180deg,#000 70%,transparent)}
+.im-oh{font-size:23px;line-height:1.15;font-weight:700;text-align:center;color:#000;margin:6px 18px 0}
+.im-os{font-size:14px;line-height:1.45;color:#3B3A3B;text-align:center;margin:6px 24px 0}
+.im-osave{display:table;margin:10px auto 0;background:#fff;border:1.5px solid #C6CCF6;border-radius:12px;padding:5px 12px;font-size:13.5px;font-weight:600;color:var(--im-blue)}
+.scr--offer .scr-body{padding:0 20px}
+.scr--offer .scr-foot{padding:6px 20px 22px}
+.im-inc{display:block;margin:12px auto 0;font-size:15px;font-weight:600;color:var(--im-blue);letter-spacing:.02em}
+
+/* sign-in, moved after the paywall */
+.scr--signin .im-sh{font-size:32px;line-height:1.15;font-weight:600;text-align:center;margin:16px 20px 0;color:#000}
+.scr--signin .im-ss{font-size:15.5px;line-height:1.45;color:#888;text-align:center;margin:10px 26px 0}
+.im-sbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;height:54px;border-radius:16px;background:var(--im-blue);color:#fff;font:400 18.5px/1 'Poppins',sans-serif;margin-top:10px}
+.im-skip{display:block;margin:16px auto 0;font-size:17px;color:#000;text-decoration:underline}
+
+/* home */
+.scr--home{background:#F4F5F8}
+.scr--home .scr-body{padding-top:46px}
+
+/* dark mode — an approximation: no dark frames were supplied */
+.phone-in.dark{--im-bg:#111317;--im-bg2:#111317;--im-card:#1B1E24;--im-ink:#F2F3F5;--im-txt:#A9ADB6;--im-line:#353943}
+.phone-in.dark .screenwrap,.phone-in.dark .scr{background:var(--im-bg)}
+.phone-in.dark .im-media,.phone-in.dark .im-doc{filter:brightness(.88)}
+.phone-in.dark .im-media{border-radius:24px;width:92%;margin-left:4%}
+.phone-in.dark .im-need,.phone-in.dark .im-osave{background:#1B1E24;border-color:#2C3038}
+.phone-in.dark .im-need .ic{background:#20352A;color:#9ED3B3}
+.phone-in.dark .im-paybg img{filter:brightness(.45)}
+.phone-in.dark .im-tabs{background:rgba(40,43,50,.92)}
+.phone-in.dark .im-tabs button{color:#C9CCD3}
+.phone-in.dark .im-tabs button.on{background:#2A2E36;color:#8FA0FF}
+.phone-in.dark .im-payh,.phone-in.dark .im-bul,.phone-in.dark .im-rate b,.phone-in.dark .im-note,.phone-in.dark .im-fine,.phone-in.dark .im-plan.on .r,.phone-in.dark .im-oh,.phone-in.dark .scr--signin .im-sh,.phone-in.dark .im-skip{color:#F2F3F5}
+.phone-in.dark .im-rate,.phone-in.dark .im-os,.phone-in.dark .im-plan.on .s{color:#A9ADB6}
+.phone-in.dark .im-plan.on .t,.phone-in.dark .im-inc{color:#8FA0FF}
+.phone-in.dark .scr--pay .scr-foot{background:var(--im-bg)}
+.phone-in.dark .scr--offer{background:linear-gradient(180deg,#171B2C,#111317 45%)}
+.phone-in.dark .scr--home img{filter:brightness(.85)}
+
+@media(max-width:500px){
+  #view-proto .im-x{top:12px}
+  #view-proto .im-tabs{margin-top:80px}
+  #view-proto .im-h{margin-top:40px}
+  #view-proto .im-doc{margin-top:40px}
+  #view-proto .scr--home .scr-body{padding-top:6px}
+}
+
+.im-proof{display:none;align-items:center;gap:12px;margin-top:14px;background:rgba(255,255,255,.75);border:1px solid #E3E5EA;border-radius:18px;padding:10px 12px}
+.scr--pay.biz .im-proof{display:flex}
+.im-proof img{height:40px;width:auto;flex:none}
+.im-proof b{display:block;font-size:15px;font-weight:600;color:#000;line-height:1.25}
+.im-proof span{font-size:13px;color:#3B3A3B}
+.phone-in.dark .im-proof{background:#1B1E24;border-color:#2C3038}
+.phone-in.dark .im-proof b{color:#F2F3F5}.phone-in.dark .im-proof span{color:#A9ADB6}
+.phone-in.dark .im-osave{color:#8FA0FF}
+
+</style>
+</head>
+<body>
+<div class="nav"><div class="nav-in">
+  <div class="nav-brand"><img src="img/icon.png" alt="Invoice Maker"><b>Growth Audit</b><span>· Invoice Maker</span></div>
+  <div class="nav-links"><button class="on" data-view="over">Overview</button><button data-view="proto">Prototype</button></div>
+</div></div>
+<div class="view on" id="view-over">
+<div class="hero"><div class="wrap">
+  <div class="eyebrow">Growth Audit · November 2026</div>
+  <h1>Invoice Maker</h1>
+  <p class="lede">Five ideas to unlock more revenue from the traffic you already have.</p>
+  <div class="meta">Prepared by <b>Adapty</b> · based on your live iOS flow and your App Store listing</div>
+  <div class="herobtns"><button class="ghostbtn" data-demo><span class="pl"><svg viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></svg></span>Watch the 30-second walkthrough</button></div>
+  <div class="stats">
+    <div class="stat"><b>30,000+</b><span>apps run subscriptions<br>on Adapty</span></div>
+    <div class="stat"><b>5</b><span>ideas, each rebuilt<br>as a working screen</span></div>
+    <div class="stat"><b>0</b><span>design changes<br>to your art direction</span></div>
+  </div>
+  <div class="fb">
+    <div class="fb-k">Built in Adapty Flow Builder</div>
+    <div class="fb-i"><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><p><b>Millions of dollars</b> in subscription revenue pass through Flow Builder every month.</p></div>
+    <div class="fb-i"><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><p><b>Nearly 500 apps</b> actively build their paywalls and onboarding in it — plenty of them past $100K MRR.</p></div>
+  </div>
+</div></div>
+<div class="sec"><div class="wrap">
+  <div class="sec-k">What this is</div>
+  <h2>We opened Invoice Maker the way a new user does, then rebuilt the parts we think are leaving money on the table.</h2>
+  <p class="body">Adapty powers subscriptions for <b>30,000+ apps</b>, so we get to see what moves conversion and revenue across the market rather than inside one app. We pointed that at Invoice Maker: installed it, went through every screen up to the home tab, read your App Store listing, and looked for gaps between what you already have and what you show people at the moment they decide.</p>
+  <p class="body">What follows is five ideas — not fifteen. Each one is a hypothesis you can A/B test, and each one is built into a clickable prototype so you can see it rather than imagine it. <b>The prototype uses your design, not ours.</b></p>
+  <div class="notes">
+    <div class="note"><h4>We did not redesign your app</h4><p>Every screen in the prototype is yours — your serif headlines, your blue buttons, your invoice art, your wood-desk paywall and your Premium / Business switch. Mostly the order changed, plus a few things you already own but do not show at the right moment.</p></div>
+    <div class="note"><h4>You may have tested some of this</h4><p>We are working from the outside, so we cannot see your experiment history — and we know you run a lot of tests. If one of these is something you have already tried, tell us and we will go deeper on the rest rather than repeat it.</p></div>
+  </div>
+</div></div>
+<div class="rule"></div>
+<div class="sec"><div class="wrap">
+  <div class="sec-k">The five ideas</div>
+  <h2>Ranked by what we would test first.</h2>
+  <p class="body">Each one links straight to the screen in the prototype.</p>
+  <div class="ideas"><button class="idea" data-jump="signin"><span class="no">01</span><span><h3>Move sign-in behind the paywall</h3><p>Right now “Sign in to your Invoice Maker” — Google, Apple or skip — sits between your four value screens and the price. It is the one step in the flow that asks for something before giving anything.</p><span class="seeit">See the screen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span><span class="out"><b>CR +8% · ARPU +17%</b><span>to purchase</span></span></button><button class="idea" data-jump="need"><span class="no">02</span><span><h3>Ask what they need, and lead the paywall with it</h3><p>Your four onboarding screens make four different promises: fast invoices, getting paid, automatic follow-ups, a professional look. One question tells you which one this person came for, so the paywall can open on it instead of “Create invoices with our app using unique features”.</p><span class="seeit">See the screen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span><span class="out"><b>CR +15–20%</b><span>to purchase</span></span></button><button class="idea" data-jump="paywall"><span class="no">03</span><span><h3>Offer Business to people who came to get paid</h3><p>Screen two sells card, bank and wallet payments, but online payments with Stripe are a Business feature, and the onboarding paywall only offers Premium. Show your own Premium / Business switch there, on Business for anyone who picked “Get paid online”.</p><span class="seeit">See the screen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span><span class="out"><b>ARPU +10–15%</b><span>plan mix</span></span></button><button class="idea" data-jump="pay"><span class="no">04</span><span><h3>Swap the rating request for your rating</h3><p>The App Store “Enjoying InvoiceMaker?” prompt fires on screen two, before anyone has made an invoice. Your 4.6 from 421 ratings appears nowhere on the paywall. Ask after the first invoice is sent; show the rating where people decide.</p><span class="seeit">See the screen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span><span class="out"><b>CR +10–15%</b><span>to purchase</span></span></button><button class="idea" data-jump="offer"><span class="no">05</span><span><h3>One offer on close, on your own lower price</h3><p>Close the onboarding paywall and you land on an empty Invoices screen. Your in-app Premium tab already sells the same 3-day trial at 9,99 € a week instead of 17,99 €. Show that once, straight from the X.</p><span class="seeit">See the screen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span><span class="out"><b>ARPU +10–15%</b><span>second chance</span></span></button></div>
+  <div class="band">
+    <div class="txt"><div class="lab">Potential outcome</div><p>Run together, these five act on the same three moments — what stands between install and price, what the paywall leads with, and what happens when someone says no.</p></div>
+    <div class="nums"><div><b>+25%</b><span>CR to purchase</span></div><div><b>+30%</b><span>Revenue, up to</span></div></div>
+  </div>
+  <div class="cta-row">
+    <div class="qr"><img src="img/qr.svg" alt="QR code for the prototype"><span><b>Or open it on your phone</b>Scan to try the flow in your hand.</span></div>
+    <button class="bigbtn" data-view="proto">Open the prototype <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+  </div>
+</div></div>
+<div class="foot"><div class="wrap">Impact ranges are Adapty's expected effect from teardowns and A/B tests across subscription apps — not measured lift for Invoice Maker. Every price, rating, quote and feature line here and in the prototype comes from Invoice Maker's own App Store listing and in-app screens.</div></div>
+
+</div>
+<div class="view" id="view-proto">
+<div class="stage">
+  <div class="phonecol">
+    <div class="tools">
+      <div class="seg" id="segTheme"><button data-theme="light" class="on">Light</button><button data-theme="dark">Dark</button></div>
+      <button class="demo-btn" id="demoBtn"><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg>30-sec walkthrough</button>
+    </div>
+    <div class="phone"><div class="phone-in" id="phoneIn">
+      <div class="island"></div>
+      <div class="sbar" id="sbar"><span>9:41</span><span class="glyphs">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7.5" width="3" height="3.5" rx="1"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="1"/><rect x="9" y="3" width="3" height="8" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M8 10.5 5.6 7.9a3.4 3.4 0 0 1 4.8 0L8 10.5Zm0-5.6a6.4 6.4 0 0 0-4.5 1.9L1.7 4.9a9 9 0 0 1 12.6 0l-1.8 1.9A6.4 6.4 0 0 0 8 4.9Z"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".6" y=".6" width="20" height="10.8" rx="3" stroke="currentColor" stroke-opacity=".5"/><rect x="2.2" y="2.2" width="16.5" height="7.6" rx="1.8" fill="currentColor"/><path d="M22.3 4.1v3.8a2 2 0 0 0 0-3.8Z" fill="currentColor" fill-opacity=".5"/></svg>
+      </span></div>
+      <div class="homebar" id="homebar"></div>
+      <div class="finger" id="finger"></div>
+      <div class="screenwrap">
+<!-- WELCOME -->
+<section class="scr" data-id="welcome">
+  <div class="scr-body">
+    <h2 class="im-h">Create beautiful invoices in seconds</h2>
+    <p class="im-sub">Save time, save paper, avoid late fees, and send a polished invoice to leave your clients great odds</p>
+    <img class="im-media" src="img/welcome.jpg" alt="" style="width:94%;margin-left:3%">
+  </div>
+  <div class="scr-foot"><button class="im-btn" data-go="pay">Continue</button></div>
+</section>
+
+<!-- GET PAID -->
+<section class="scr" data-id="pay">
+  <div class="scr-body">
+    <h2 class="im-h">Get paid the way clients prefer</h2>
+    <p class="im-sub">Accept cards, bank transfers, wallet payments, and secure payment links- all in one flow</p>
+    <img class="im-media" src="img/pay.jpg" alt="">
+  </div>
+  <div class="scr-foot"><button class="im-btn" data-go="auto">Continue</button></div>
+</section>
+
+<!-- AUTOMATE -->
+<section class="scr" data-id="auto">
+  <div class="scr-body">
+    <h2 class="im-h">Automate follow-ups and recurring billing</h2>
+    <p class="im-sub">Set reminders, recurring invoices, and overdue nudges to get faster without manual work</p>
+    <img class="im-media" src="img/auto.jpg" alt="" style="width:92%;margin-left:4%">
+  </div>
+  <div class="scr-foot"><button class="im-btn" data-go="brand">Continue</button></div>
+</section>
+
+<!-- BRAND -->
+<section class="scr" data-id="brand">
+  <div class="scr-body">
+    <h2 class="im-h">Look professional from day one</h2>
+    <p class="im-sub">Choose from beautiful templates, customize your brand, and add your logo for invoices that build trust</p>
+    <img class="im-media" src="img/brand.jpg" alt="">
+  </div>
+  <div class="scr-foot"><button class="im-btn" data-go="need">Continue</button></div>
+</section>
+
+<!-- NEED (new) -->
+<section class="scr" data-id="need">
+  <div class="scr-body">
+    <h2 class="im-h">What do you need most?</h2>
+    <p class="im-sub">Pick one. We’ll set Invoice Maker up around it.</p>
+    <div class="im-needs" id="needList"></div>
+  </div>
+  <div class="scr-foot"><button class="im-btn" data-go="paywall">Continue</button></div>
+</section>
+
+<!-- PAYWALL -->
+<section class="scr scr--pay" data-id="paywall">
+  <div class="im-paybg"><img src="img/paper.jpg" alt=""></div>
+  <button class="im-x" id="payClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  <div class="scr-top">
+    <div class="im-tabs" id="tabs"><button data-tab="prem">Premium</button><button data-tab="biz">Business</button></div>
+    <h2 class="im-payh" id="payH"></h2>
+    <p class="im-bul" id="payBul"></p>
+  </div>
+  <div class="scr-body">
+    <div class="im-rate"><span class="st">★★★★★</span><span><b>4.6</b> · 421 ratings on the App Store</span></div>
+    <div class="im-plans">
+      <button class="im-plan im-prem" data-v="trial"><span class="im-badge">BEST OFFER</span><span class="t">FREE</span><span class="r">3 days</span></button>
+      <button class="im-plan im-prem" data-v="year"><span><span class="t">Unlimited Yearly</span><span class="s">Just 69,99 € per year</span></span><span class="r"><b>€1.35</b>per week</span></button>
+      <button class="im-plan im-biz on" data-v="biz"><span class="im-badge">BEST OFFER</span><span><span class="t">Business Yearly</span><span class="s">Just 299,99 € per year</span></span><span class="r"><b>5,77 €</b>per week</span></button>
+    </div>
+    <div class="im-proof"><img src="img/avatars.png" alt=""><div><b>Businesses invoice faster with Business</b><span>Thousands of our members use Business</span></div></div>
+    <div style="height:4px"></div>
+  </div>
+  <div class="scr-foot">
+    <p class="im-note" id="payNote"></p>
+    <button class="im-pbtn" id="payCta"></button>
+    <p class="im-fine" id="payFine"></p>
+    <div class="im-legal"><a>Terms of Service</a><a>Restore</a><a>Privacy Policy</a></div>
+  </div>
+</section>
+
+<!-- OFFER ON CLOSE -->
+<section class="scr scr--offer sheet" data-id="offer">
+  <button class="im-x" id="offClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  <div class="scr-body">
+    <img class="im-doc" src="img/bizdoc.jpg" alt="">
+    <h2 class="im-oh">Before you go</h2>
+    <p class="im-os">The same 3 days free, then 9,99 € a week instead of 17,99 €.</p>
+    <span class="im-osave">44% less than the plan you just saw</span>
+    <div class="im-plans" id="offList">
+      <button class="im-plan" data-v="year"><span><span class="t">Unlimited Yearly</span><span class="s">Just 69,99 € per year</span></span><span class="r"><b>1,35 €</b>per week</span></button>
+      <button class="im-plan on" data-v="trial9"><span class="t" style="font-weight:600">3-Day Free Trial</span><span class="r"><b>then 9,99 €</b>per week</span></button>
+    </div>
+  </div>
+  <div class="scr-foot">
+    <p class="im-note"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1326DE"/><path d="M12 7v5l-3 2" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>Cancel anytime</p>
+    <button class="im-pbtn" id="offerCta">Continue</button>
+    <button class="im-inc">WHAT'S INCLUDED</button>
+  </div>
+</section>
+
+<!-- SIGN-IN, moved after the paywall -->
+<section class="scr scr--signin" data-id="signin">
+  <div class="scr-body">
+    <img class="im-media" src="img/signin.jpg" alt="" style="margin-top:0">
+    <h2 class="im-sh">Sign in to your Invoice Maker</h2>
+    <p class="im-ss">Sign in to store invoices safely and access them anytime from any device.</p>
+  </div>
+  <div class="scr-foot">
+    <button class="im-sbtn" data-go="home">Continue with Google <b style="background:#fff;color:#1326DE;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-size:16px">G</b></button>
+    <button class="im-sbtn" data-go="home">Continue with Apple <svg width="22" height="26" viewBox="0 0 24 28" fill="#fff"><path d="M19.7 14.9c0-3.2 2.6-4.7 2.7-4.8-1.5-2.2-3.8-2.5-4.6-2.5-2-.2-3.8 1.2-4.8 1.2-1 0-2.5-1.1-4.2-1.1-2.1 0-4.1 1.3-5.2 3.2-2.2 3.9-.6 9.6 1.6 12.7 1.1 1.5 2.3 3.2 3.9 3.2 1.6-.1 2.2-1 4.1-1 1.9 0 2.5 1 4.2 1 1.7 0 2.8-1.6 3.8-3.1 1.2-1.8 1.7-3.5 1.7-3.6-.1 0-3.3-1.3-3.2-5.1zM16.6 5.4c.9-1.1 1.5-2.5 1.3-4-1.3.1-2.8.9-3.7 1.9-.8.9-1.5 2.4-1.3 3.9 1.4.1 2.8-.7 3.7-1.8z"/></svg></button>
+    <button class="im-skip" data-go="home">Continue without account</button>
+  </div>
+</section>
+
+<!-- HOME -->
+<section class="scr scr--home" data-id="home">
+  <div class="scr-body"><img class="im-media" src="img/home.jpg" alt="Invoice Maker home" style="margin:0"></div>
+</section>
+
+      </div>
+    </div></div>
+    <div class="demo-cap hidden" id="demoCap"><div class="bar"><i id="demoProg"></i></div><p id="demoTxt"></p><button id="demoStop">Stop</button></div>
+    <div class="chips" id="chips"></div>
+    <p class="chiphint">Jump to any screen — answers already filled in.</p>
+    <div class="qr"><img src="img/qr.svg" alt="QR code for this prototype"><span><b>Open it on your phone</b>Scan to try the flow in your hand.</span></div>
+  </div>
+  <div class="panelcol"><div class="pn" id="panel"></div></div>
+</div>
+</div>
+<script>
+var COMPANY='Invoice Maker';
+var LANGS=['en'];
+var T={};
+var ORDER=['welcome','pay','auto','brand','need','paywall','offer','signin','home'];
+var LABEL={welcome:'Welcome',pay:'Get paid',auto:'Automate',brand:'Look professional',need:'What you need',paywall:'Paywall',offer:'Offer on close',signin:'Sign-in (moved)',home:'Home'};
+var OFFER_ID='offer';
+var NEEDS=[
+ {k:'fast',ic:'<path d="M4 4h12l4 4v12H4z"/><path d="M8 12h8M8 16h5"/>',t:'Send invoices fast',s:'Beautiful invoices in seconds',
+  h:'Create beautiful invoices in seconds',b:['Unlimited Invoices','No Watermarks','Add Signature to Invoices'],tab:'prem'},
+ {k:'paid',ic:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/>',t:'Get paid online',s:'Cards, bank transfers and payment links',
+  h:'Get paid online with Stripe',b:['Online payments with Stripe','All invoice templates','Know where your money goes'],tab:'biz'},
+ {k:'auto',ic:'<path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/>',t:'Chase late payments',s:'Reminders and recurring invoices',
+  h:'Get paid on time, without chasing',b:['Unlimited Invoices','No Watermarks','Add Signature to Invoices'],tab:'prem'},
+ {k:'pro',ic:'<path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 15.6 7.1 18.2l.9-5.5-4-3.9 5.5-.8z"/>',t:'Look professional',s:'Templates, your logo and signature',
+  h:'Look professional from day one',b:['Add Signature to Invoices','No Watermarks','Unlimited Invoices'],tab:'prem'}
+];
+function NEED(){ return NEEDS.filter(function(n){return n.k===S.need;})[0]; }
+function defaults(){ return {lang:'en', theme:S0.theme, need:'paid', tab:'biz', plan:'trial', oplan:'trial9'}; }
+function buildDynamic(){
+  var g=document.getElementById('needList'); g.innerHTML='';
+  NEEDS.forEach(function(n){ var b=document.createElement('button'); b.className='im-need'; b.dataset.v=n.k;
+    b.innerHTML='<span class="ic"><svg viewBox="0 0 24 24">'+n.ic+'</svg></span><span><b>'+n.t+'</b><span>'+n.s+'</span></span>';
+    b.addEventListener('click',function(){ S.need=n.k; S.tab=n.tab; syncScreen(); }); g.appendChild(b); });
+}
+function syncScreen(){
+  var n=NEED();
+  document.querySelectorAll('.im-need').forEach(function(b){ b.classList.toggle('on',b.dataset.v===S.need); });
+  var P=scr.paywall, biz=S.tab==='biz';
+  P.classList.toggle('biz',biz);
+  document.querySelectorAll('#tabs button').forEach(function(b){ b.classList.toggle('on',b.dataset.tab===S.tab); });
+  document.getElementById('payH').textContent=n.h;
+  document.getElementById('payBul').innerHTML=n.b.map(function(x){return '<i></i>'+x;}).join(' ');
+  document.querySelectorAll('.im-prem').forEach(function(b){ b.classList.toggle('on',b.dataset.v===S.plan); });
+  var trial=!biz && S.plan==='trial';
+  document.getElementById('payNote').innerHTML = trial
+    ? '<svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z" fill="#1326DE"/><path d="m8.5 12 2.4 2.4 4.6-4.8" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>No payment now'
+    : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1326DE"/><path d="M12 7v5l-3 2" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>Cancel anytime';
+  document.getElementById('payCta').textContent = trial ? 'Try for free' : 'Continue';
+  document.getElementById('payFine').textContent = biz ? '299,99 € per year · cancel anytime' : (trial ? '3 days free, then 17,99 €/week' : '69,99 € per year · cancel anytime');
+  document.querySelectorAll('#offList .im-plan').forEach(function(b){ b.classList.toggle('on',b.dataset.v===S.oplan); });
+}
+function onEnter(id){}
+document.querySelectorAll('#tabs button').forEach(function(b){ b.addEventListener('click',function(){ S.tab=b.dataset.tab; syncScreen(); }); });
+document.querySelectorAll('.im-prem').forEach(function(b){ b.addEventListener('click',function(){ S.plan=b.dataset.v; syncScreen(); }); });
+document.querySelectorAll('#offList .im-plan').forEach(function(b){ b.addEventListener('click',function(){ S.oplan=b.dataset.v; syncScreen(); }); });
+document.getElementById('payClose').addEventListener('click',function(){ go('offer'); });
+document.getElementById('payCta').addEventListener('click',function(){ go('signin'); });
+document.getElementById('offClose').addEventListener('click',function(){ go('signin'); });
+document.getElementById('offerCta').addEventListener('click',function(){ go('signin'); });
+
+async function demoScript(tok){
+  S.need='fast'; S.tab='prem'; syncScreen();
+  cap('A new install opens on your welcome screen.'); log(); await pause(1400,tok);
+  await tap('[data-id=welcome] .im-btn',tok); log();
+  cap('Your value screens — with no rating request on screen two.'); await pause(1300,tok);
+  await tap('[data-id=pay] .im-btn',tok); await pause(500,tok);
+  await tap('[data-id=auto] .im-btn',tok); await pause(500,tok);
+  await tap('[data-id=brand] .im-btn',tok); log();
+  cap('One question: which of your four promises brought them here.'); await pause(800,tok);
+  await tap('#needList [data-v=paid]',tok); await pause(500,tok);
+  await tap('[data-id=need] .im-btn',tok); log();
+  cap('“Get paid online” opens the paywall on Business, with your 4.6 rating.'); await pause(2100,tok);
+  await tap('#tabs [data-tab=prem]',tok); await pause(900,tok); await tap('#tabs [data-tab=biz]',tok); await pause(500,tok);
+  cap('They close it. One offer: your own 9,99 € week instead of 17,99 €.'); await tap('#payClose',tok); log(); await pause(2400,tok);
+  await tap('#offerCta',tok); log();
+  cap('Sign-in now comes after the price, not before it.'); await pause(2400,tok);
+}
+
+var PANEL={
+welcome:{ctx:true,t:'Create beautiful invoices in seconds',kept:'Untouched — your serif headline, the invoice stack with its four templates and your blue Continue.'},
+pay:{n:4,t:'Swap the rating request for your rating',
+ hyp:'Try this screen without the “Enjoying InvoiceMaker?” prompt, <b>because today the App Store rating request fires here, before anyone has made an invoice</b>. Ask after the first invoice is sent, and put your 4.6 from 421 ratings on the paywall instead.',
+ kept:'Your payment-methods art, headline and copy as they ship.',out:'CR +10–15%'},
+auto:{ctx:true,t:'Automate follow-ups and recurring billing',kept:'Untouched — your timeline art, chips and copy.'},
+brand:{ctx:true,t:'Look professional from day one',kept:'Untouched — your branding art and copy. This now hands over to the question below.'},
+need:{n:2,t:'Ask what they need, and lead the paywall with it',
+ hyp:'Try one question built from your own four screens, <b>because each screen makes a different promise and the paywall today answers none of them</b>. Pick an answer and the paywall headline and benefits change.',
+ kept:'Your serif headings, white cards and blue button. The four options are your four onboarding headlines.',out:'CR +15–20%'},
+paywall:{n:2,t:'Ask what they need, and lead the paywall with it',
+ hyp:'Try a headline that answers their pick, <b>because today every install sees “Create invoices with our app using unique features”</b>. The benefits under it reorder too, and your 4.6 rating sits above the plans.',
+ n2:3,t2:'Offer Business to people who came to get paid',hyp2:'Try your own Premium / Business switch here, opening on Business for “Get paid online”, <b>because screen two sells online payments, and Stripe payments are on your Business plan</b>.',out2:'ARPU +10–15%',
+ kept:'Your wood-desk photo, the Premium / Business switch from your in-app paywall, your plan rows, BEST OFFER pill, blue button and fine print.',out:'CR +15–20%'},
+offer:{n:5,t:'One offer on close, on your own lower price',
+ hyp:'Try showing this straight from the X, <b>because today closing the paywall drops people on an empty Invoices screen</b>. 9,99 € a week with the same 3-day trial is already on your in-app Premium tab, 44% below the 17,99 € onboarding price.',
+ kept:'Your in-app Premium screen: the invoice preview, both plan rows, Cancel anytime, Continue and What’s included.',out:'ARPU +10–15%'},
+signin:{n:1,t:'Move sign-in behind the paywall',
+ hyp:'Try asking for an account here, after the price, <b>because today it sits between your value screens and the paywall — the only step that asks for something before giving anything</b>. “Continue without account” shows it is not needed to start.',
+ kept:'Your sign-in screen as it ships: the app preview, headline, Google and Apple buttons and the skip link.',out:'CR +8% · ARPU +17%'},
+home:{ctx:true,t:'Invoices',kept:'Your empty Invoices screen as it ships, with Create Invoice.'}
+};
+
+/* ===== shared engine: language, router, chips, walkthrough, panel, views =====
+   App file must define before this: LANGS, LANG_NAMES, T, ORDER, LABEL, OFFER_ID, PANEL, COMPANY,
+   defaults(), syncScreen(), buildDynamic(), demoScript(tok), onEnter(id), LANG_NOTE */
+var S0 = {lang:'en', theme:'light'};
+var S = defaults();
+function L(){ return LANGS.indexOf(S.lang); }
+function t(k,v){ var s=(T[k]||[k])[L()]; if(s===undefined) s=T[k][0]; if(v) Object.keys(v).forEach(function(x){ s=s.split('{'+x+'}').join(v[x]); }); return s; }
+function applyStatic(){
+  document.documentElement.lang=S.lang;
+  document.querySelectorAll('[data-t]').forEach(function(el){ el.textContent=t(el.dataset.t); });
+  document.querySelectorAll('[data-th]').forEach(function(el){ el.innerHTML=t(el.dataset.th); });
+  buildDynamic();
+}
+var scr={}, hist=[], cur=ORDER[0];
+document.querySelectorAll('.scr').forEach(function(s){ scr[s.dataset.id]=s; });
+function chrome(){ var dark=S.theme==='dark', l=dark || !!scr[cur].dataset.light;
+  document.getElementById('sbar').classList.toggle('light',l);
+  document.getElementById('homebar').classList.toggle('light',l); }
+function enter(id){ chrome(); paintChips(); paintPanel(); onEnter(id); }
+function go(id,opts){
+  opts=opts||{}; if(id===cur) return;
+  var from=scr[cur], to=scr[id];
+  if(!opts.back) hist.push(cur);
+  if(from){ from.classList.remove('is-active');
+    if(!to.classList.contains('sheet') && !from.classList.contains('sheet')) from.classList.add('is-past'); }
+  Object.keys(scr).forEach(function(k){ if(k!==id&&k!==cur) scr[k].classList.remove('is-active'); });
+  if(to.classList.contains('sheet') && from) from.classList.add('is-active');
+  to.classList.remove('is-past'); to.classList.add('is-active');
+  cur=id; syncScreen(); enter(id);
+}
+function back(){
+  if(!hist.length) return;
+  var prev=hist.pop();
+  scr[cur].classList.remove('is-active');
+  scr[prev].classList.remove('is-past'); scr[prev].classList.add('is-active');
+  cur=prev; enter(prev);
+}
+function jump(id){
+  var i=ORDER.indexOf(id);
+  Object.keys(scr).forEach(function(k){ scr[k].classList.add('nofx'); scr[k].classList.remove('is-active','is-past'); });
+  hist=ORDER.slice(0,i<0?0:i).filter(function(k){ return !scr[k].classList.contains('sheet'); });
+  if(scr[id].classList.contains('sheet') && hist.length) scr[hist[hist.length-1]].classList.add('is-active');
+  scr[id].classList.add('is-active'); cur=id;
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    Object.keys(scr).forEach(function(k){ scr[k].classList.remove('nofx'); }); }); });
+  syncScreen(); enter(id);
+}
+var chipsBuilt=false;
+function paintChips(){
+  var c=document.getElementById('chips');
+  if(!chipsBuilt){ chipsBuilt=true;
+    ORDER.forEach(function(id){ var b=document.createElement('button'); b.className='chip'+(id===OFFER_ID?' offer':''); b.textContent=LABEL[id];
+      b.dataset.id=id; b.onclick=function(){ stopDemo(); jump(id); }; c.appendChild(b); }); }
+  c.querySelectorAll('.chip').forEach(function(b){ b.classList.toggle('on', b.dataset.id===cur); });
+}
+document.querySelectorAll('[data-go]').forEach(function(b){ b.addEventListener('click',function(){ go(b.dataset.go); }); });
+document.querySelectorAll('[data-back]').forEach(function(b){ b.addEventListener('click',back); });
+function setSeg(id,attr,val){ document.querySelectorAll('#'+id+' button').forEach(function(b){ b.classList.toggle('on', b.dataset[attr]===val); }); }
+function setLang(l){ S.lang=l; S0.lang=l; setSeg('segLang','lang',l); applyStatic(); syncScreen(); paintPanel(); }
+function setTheme(th){ S.theme=th; S0.theme=th; document.getElementById('phoneIn').classList.toggle('dark',th==='dark'); setSeg('segTheme','theme',th); chrome(); }
+document.querySelectorAll('#segLang button').forEach(function(b){ b.addEventListener('click',function(){ stopDemo(); setLang(b.dataset.lang); }); });
+document.querySelectorAll('#segTheme button').forEach(function(b){ b.addEventListener('click',function(){ setTheme(b.dataset.theme); }); });
+
+/* ===== the 30-second walkthrough ===== */
+var demo={tok:0,on:false,t0:0,iv:null}, finger=document.getElementById('finger'), phoneIn=document.getElementById('phoneIn');
+function W(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+function cap(txt){ document.getElementById('demoTxt').textContent=txt; }
+function log(){ (window.__demoLog=window.__demoLog||[]).push([cur,Date.now()-demo.t0]); }
+async function tap(sel,tok){
+  if(demo.tok!==tok) throw 0;
+  var el=document.querySelector(sel); if(!el) return;
+  var r=el.getBoundingClientRect(), p=phoneIn.getBoundingClientRect(), z=p.width/phoneIn.offsetWidth||1;
+  finger.style.left=((r.left-p.left+r.width/2)/z)+'px'; finger.style.top=((r.top-p.top+r.height/2)/z)+'px';
+  finger.classList.add('show'); await W(380); if(demo.tok!==tok) throw 0;
+  finger.classList.add('press'); await W(120); finger.classList.remove('press'); el.click(); await W(160);
+  if(demo.tok!==tok) throw 0;
+}
+async function pause(ms,tok){ await W(ms); if(demo.tok!==tok) throw 0; }
+function startDemo(){
+  stopDemo(); var tok=++demo.tok; demo.on=true; demo.t0=Date.now(); window.__demoLog=[];
+  var keep={lang:S.lang,theme:S.theme}; S=defaults(); S.lang=keep.lang; S.theme=keep.theme;
+  applyStatic(); jump(ORDER[0]);
+  document.getElementById('demoCap').classList.remove('hidden');
+  demo.iv=setInterval(function(){ document.getElementById('demoProg').style.width=Math.min(100,(Date.now()-demo.t0)/280)+'%'; },200);
+  (async function(){ try{ await demoScript(tok); finger.classList.remove('show'); log(); stopDemo(); }catch(e){} })();
+}
+function stopDemo(){ if(!demo.on) return; demo.tok++; demo.on=false; clearInterval(demo.iv); finger.classList.remove('show','press');
+  document.getElementById('demoCap').classList.add('hidden'); }
+document.getElementById('demoBtn').addEventListener('click',startDemo);
+document.getElementById('demoStop').addEventListener('click',stopDemo);
+phoneIn.addEventListener('pointerdown',function(e){ if(e.isTrusted && demo.on) stopDemo(); });
+
+/* ===== the short panel ===== */
+function outBlock(lab,val){ return '<div class="pn-out"><div class="lab">'+lab+'</div><div class="v">'+val+'</div></div>'; }
+function paintPanel(){
+  var d=PANEL[cur]; if(!d) return; var h='';
+  if(d.ctx){
+    h+='<div class="pn-n ctx">Context · no change proposed</div><h3 class="pn-t">'+d.t+'</h3><div class="pn-kept">'+d.kept+'</div>';
+  } else {
+    h+='<div class="pn-n">Idea '+d.n+' of 5</div><h3 class="pn-t">'+d.t+'</h3><p class="pn-hyp">'+d.hyp+'</p>'+outBlock('Potential outcome · based on Adapty data',d.out);
+    if(d.hyp2){ h+='<div class="pn-sep"></div><div class="pn-n">Idea '+d.n2+' of 5</div>'+(d.t2?'<h3 class="pn-t">'+d.t2+'</h3>':'')+'<p class="pn-hyp" style="margin-top:12px">'+d.hyp2+'</p>'+outBlock('Potential outcome · based on Adapty data',d.out2); }
+    h+='<div class="pn-kept"><b>Your design, unchanged.</b> '+d.kept+'</div>';
+  }
+  if(S.lang!=='en' && typeof LANG_NOTE!=='undefined') h+='<div class="pn-kept"><b>Language.</b> '+LANG_NOTE(S.lang)+'</div>';
+  h+='<div class="pn-foot">Ranges are Adapty’s expected effect from tests across 30,000+ subscription apps — not measured lift for '+COMPANY+'. Prices, ratings, quotes and feature lines come from your own published material.</div>';
+  document.getElementById('panel').innerHTML=h;
+}
+
+/* ===== views ===== */
+function showView(v){
+  if(v!=='proto') stopDemo();
+  document.querySelectorAll('.view').forEach(function(x){ x.classList.remove('on'); });
+  document.getElementById('view-'+v).classList.add('on');
+  document.querySelectorAll('.nav-links button[data-view]').forEach(function(b){ b.classList.toggle('on', b.dataset.view===v); });
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('[data-view]').forEach(function(b){ b.addEventListener('click',function(){ showView(b.dataset.view); }); });
+document.querySelectorAll('.idea[data-jump]').forEach(function(b){ b.addEventListener('click',function(){ showView('proto'); jump(b.dataset.jump); }); });
+document.querySelectorAll('[data-demo]').forEach(function(b){ b.addEventListener('click',function(){ showView('proto'); startDemo(); }); });
+
+applyStatic();
+scr[ORDER[0]].classList.add('is-active');
+syncScreen(); chrome(); paintChips(); paintPanel();
+if(/[?&]open=proto/.test(location.search)) showView('proto');
+
+</script>
+</body>
+</html>
